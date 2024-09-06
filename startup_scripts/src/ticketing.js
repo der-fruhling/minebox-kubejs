@@ -343,6 +343,8 @@ ComputerCraftEvents.peripheral(event => {
 StartupEvents.registry("item", event => {
     event.create("ticketing:ticket")
         .maxDamage(100)
+        .barColor(s => Color.BLUE)
+        .unstackable()
         .texture("ticketing:item/ticket");
     event.create("ticketing:blank_ticket")
         .texture("ticketing:item/blank_ticket");
