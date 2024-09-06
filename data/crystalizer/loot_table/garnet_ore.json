@@ -1,0 +1,44 @@
+{
+    "type": "block",
+    "pools": [
+        {
+            "entries": [
+                {
+                    "type": "alternatives",
+                    "children": [
+                        {
+                            "type": "item",
+                            "name": "crystalizer:garnet_ore",
+                            "conditions": [
+                                {
+                                    "condition": "match_tool",
+                                    "predicate": {
+                                        "items": ["#minecraft:pickaxes"],
+                                        "predicates": {
+                                            "enchantments": [
+                                                {
+                                                    "enchantments": ["silk_touch"]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "item",
+                            "name": "crystalizer:garnet_gem",
+                            "functions": [
+                                {
+                                    "function": "enchanted_count_increase",
+                                    "count": { "min": 1, "max": 2 },
+                                    "enchantment": "looting"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
