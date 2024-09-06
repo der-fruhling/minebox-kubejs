@@ -16,6 +16,9 @@ StartupEvents.registry("block", event => {
         .placementState(cb => {
             cb.set(BlockProperties.HORIZONTAL_FACING, cb.player.horizontalFacing.opposite);
         })
+        .blockEntity(e => {
+            e.inventory(9, 1, 'ticketing:blank_ticket');
+        })
         .blockstateJson = {
             variants: {
                 "inventory": { model: "ticketing:item/ticket_machine" },
@@ -108,6 +111,29 @@ function printTicket(block, _side, args, _computer, _ctx) {
         return { success: false, error: "invalid argument; expecting a single table" };
     }
 
+    let foundPaper = false;
+    const e = block.entityData;
+
+    for (let i = 0; i < e.attachments[0].items.length; i++) {
+        let element = e.attachments[0].items[i];
+        if(element.id == 'ticketing:blank_ticket' && element.Count > 0) {
+            foundPaper = true;
+            element.Count -= 1;
+
+            if(element.Count == 0) {
+                e.attachments[0].items.remove(i)
+            } else {
+                e.attachments[0].items[i] = element;
+            }
+
+            break;
+        }
+    }
+
+    if(!foundPaper) {
+        return { success: false, cause: 'paper', error: "printer out of blank tickets" }
+    }
+
     const object = args[0];
     const source = object.source;
     const destination = object.destination;
@@ -158,6 +184,7 @@ function printTicket(block, _side, args, _computer, _ctx) {
     block.getLevel().playSound(marker, block.pos, 'ticketing:ticket.fwoop', 'blocks', 1.0, 1.0);
     marker.remove('discarded');
 
+    block.setEntityData(e);
     return { success: true, id: id };
 }
 
@@ -317,4 +344,6 @@ StartupEvents.registry("item", event => {
     event.create("ticketing:ticket")
         .maxDamage(100)
         .texture("ticketing:item/ticket");
+    event.create("ticketing:blank_ticket")
+        .texture("ticketing:item/blank_ticket");
 });

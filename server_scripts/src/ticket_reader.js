@@ -1,5 +1,3 @@
-// priority: 0
-
 import { $BlockRightClickedEventJS } from "packages/dev/latvian/mods/kubejs/block/$BlockRightClickedEventJS";
 import { $InteractionHand } from "packages/net/minecraft/world/$InteractionHand";
 
@@ -15,41 +13,6 @@ BlockEvents.rightClicked("ticketing:ticket_reader", event => {
             event.player.inventory.extractItem(event.player.selectedSlot, 1, false);
         }
     }
-})
-
-ServerEvents.recipes(event => {
-    event.shaped(
-        Item.of("ticketing:ticket_machine", 1),
-        [
-            "IDI",
-            "RFB",
-            "IDI"
-        ],
-        {
-            I: "create:industrial_iron_block",
-            D: "minecraft:diamond",
-            R: "minecraft:redstone",
-            F: "suppsquared:metal_frame",
-            B: "minecraft:black_dye"
-        }
-    );
-
-    event.shaped(
-        Item.of("ticketing:ticket_reader", 1),
-        [
-            "IEI",
-            "RFL",
-            "IPI"
-        ],
-        {
-            I: "create:industrial_iron_block",
-            E: "minecraft:emerald",
-            R: "minecraft:redstone",
-            P: "minecraft:paper",
-            F: "suppsquared:metal_frame",
-            L: "minecraft:light_blue_dye"
-        }
-    )
 })
 
 /**
@@ -83,3 +46,17 @@ function performReadTicket(event, stack) {
         return false;
     }
 }
+
+BlockEvents.placed('ticketing:ticket_reader', event => {
+    const e = event.block.entityData;
+    e.data.placer = event.entity.uuid.toString();
+    event.block.setEntityData(e);
+})
+
+BlockEvents.broken('ticketing:ticket_reader', event => {
+    const e = event.block.entityData;
+    if(!event.entity.uuid.equals(UUID.fromString(e.data.placer)) && e.data.placer != undefined) {
+        console.log(`${event.player.uuid} != ${e.data.placer}`)
+        event.cancel()
+    }
+})
